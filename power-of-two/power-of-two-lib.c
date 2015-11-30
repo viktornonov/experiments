@@ -1,31 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-#define TRUE 1
-#define FALSE 0
-#define bool short
-
-char* power_of_two_binary(unsigned int);
-int get_ones_count(unsigned int);
-bool is_power_of_two(unsigned int);
-
-int main()
-{
-    unsigned int number;
-    scanf("%u", &number);
-    printf("binary value of number 2^%u in binary is %s\n", number, power_of_two_binary(number));
-
-    //check if n is power of two
-    if(is_power_of_two(number)) {
-        printf("number %u is power of two\n", number);
-    }
-    else {
-        printf("number %u is not power of two\n", number);
-    }
-
-    return 0;
-}
-
+#include "power-of-two-lib.h"
 // the function is implemented based on the property:
 // 2^power = '1' + power*'0'
 // 2^1 = 10
@@ -63,5 +36,16 @@ int get_ones_count(unsigned int number) {
 // O(n)
 bool is_power_of_two(unsigned int number) {
     return (1 == get_ones_count(number)) ? TRUE : FALSE;
+}
+
+//get which power of 2 is the number
+//AKA lg number
+int get_power_of_two(unsigned int number) {
+    int power = 0;
+    while((number & 1) == 0) {
+        power += 1;
+        number = number >> 1;
+    }
+    return power;
 }
 
