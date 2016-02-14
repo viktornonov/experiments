@@ -115,9 +115,9 @@ short* find_mantissa(unsigned long number_in_scientific, int count_digits)
             one /= 10;
         }
 
-        printf("%lu, ", one);
-        printf("%lu", res);
-        printf("\n");
+//      printf("%lu, ", one);
+//      printf("%lu", res);
+//      printf("\n");
 
         for(i = 0; i < res_index; i++) {
             if (results[i] == res) {
@@ -131,8 +131,8 @@ short* find_mantissa(unsigned long number_in_scientific, int count_digits)
             res_index++;
         }
     }
-    printf("%d ", mantissa_index);
-    printf("%d", result_repeat_start);
+//    printf("%d ", mantissa_index);
+//    printf("%d", result_repeat_start);
 
     if (res != 0 && result_repeating == 1) {
         for(i = result_repeat_start; i <= 23; i++) {
