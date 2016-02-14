@@ -5,6 +5,8 @@ short find_sign(float);
 short* find_exponent(float);
 short* find_mantissa(unsigned long, int);
 short* find_mantissa_through_float(float);
+double convert_to_scientific_notation(double);
+
 
 int main()
 {
@@ -15,6 +17,8 @@ int main()
     short* exponent;
     exponent = (short *)malloc(8*sizeof(short));
 //    exponent = find_exponent(number);
+    double sci_notation = convert_to_scientific_notation(173.7);
+    printf("%lf\n", sci_notation);
 
     short* mantissa;
     mantissa = (short *)malloc(23*sizeof(short));
@@ -26,6 +30,7 @@ int main()
     }
     printf("\n");
 
+    /*
     short* mantissa_float;
     mantissa_float = (short *)malloc(23*sizeof(short));
     mantissa_float = find_mantissa_through_float(1.35703125);
@@ -34,6 +39,7 @@ int main()
         printf("%d", mantissa_float[i]);
     }
     printf("\n");
+    */
 
     short result[32]; //32-bit float
     free(exponent);
@@ -72,6 +78,24 @@ short* find_exponent(float number)
     short biased_exponent = 127 + power;
     //convert to biased exponent to binary
     return exponent;
+}
+
+double convert_to_scientific_notation(double number)
+{
+    if (number < 0) {
+        number = 0 - number;
+    }
+    if (number < 1)
+        while(number <= 1) {
+            number *= 2;
+        }
+    else { //> 1
+        while(number > 2) {
+            number /= 2;
+        }
+    }
+
+    return number;
 }
 
 short* find_mantissa(unsigned long number_in_scientific, int count_digits)
