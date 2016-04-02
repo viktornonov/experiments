@@ -5,7 +5,7 @@
 #define BMP_HEADER_SIZE 14
 
 int main() {
-    FILE *fp = fopen("test2.bmp", "rb");
+    FILE *fp = fopen("test.bmp", "rb");
     unsigned char bmp_header[BMP_HEADER_SIZE]; //describe why unsigned char
     fread(bmp_header, 1, BMP_HEADER_SIZE, fp);
 
