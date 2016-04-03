@@ -11,28 +11,28 @@ END_TEST
 
 START_TEST (testFor0)
 {
-    unsigned char arr[4] = {0x00,0x00, 0x00, 0x00};
+    unsigned char arr[4] = {0x00, 0x00, 0x00, 0x00};
     ck_assert_int_eq(0, lsb_to_int(arr));
 }
 END_TEST
 
 START_TEST (testFor255)
 {
-    unsigned char arr[4] = {0xFF,0x00, 0x00, 0x00};
+    unsigned char arr[4] = {0xFF, 0x00, 0x00, 0x00};
     ck_assert_int_eq(255, lsb_to_int(arr));
 }
 END_TEST
 
 START_TEST (testFor61695)
 {
-    unsigned char arr[4] = {0xFF,0xF0, 0x00, 0x00};
+    unsigned char arr[4] = {0xFF, 0xF0, 0x00, 0x00};
     ck_assert_int_eq(61695, lsb_to_int(arr));
 }
 END_TEST
 
 START_TEST (testFor268435456)
 {
-    unsigned char arr[4] = {0x00,0x00, 0x00, 0x10};
+    unsigned char arr[4] = {0x00, 0x00, 0x00, 0x10};
     ck_assert_int_eq(268435456, lsb_to_int(arr));
 }
 END_TEST
@@ -62,12 +62,12 @@ START_TEST (testForBorderPixelsIn1x1Image)
     //the img should look like this
     //|B|W|
     //|W|B|
-    unsigned char byte_array[4] = { 0x40, 0x00,
-                                    0x80, 0x00 };
-    ck_assert_int_eq(0, extract_pixel(byte_array, 2, 0, 0));
-    ck_assert_int_eq(1, extract_pixel(byte_array, 2, 0, 1));
-    ck_assert_int_eq(1, extract_pixel(byte_array, 2, 1, 0));
-    ck_assert_int_eq(0, extract_pixel(byte_array, 2, 1, 1));
+    unsigned char byte_array[8] = { 0x40, 0x00, 0x00, 0x00,
+                                    0x80, 0x00, 0x00, 0x00 };
+    ck_assert_int_eq(0, extract_pixel(byte_array, 4, 0, 0));
+    ck_assert_int_eq(1, extract_pixel(byte_array, 4, 0, 1));
+    ck_assert_int_eq(1, extract_pixel(byte_array, 4, 1, 0));
+    ck_assert_int_eq(0, extract_pixel(byte_array, 4, 1, 1));
 }
 END_TEST
 
@@ -85,9 +85,9 @@ END_TEST
 
 START_TEST (testForBiggerImage)
 {
-    unsigned char byte_array[4] = { 0x01, 0x00, 0x10, 0xFF, 0x12,
-                                    0x00, 0x01, 0x12, 0xDD, 0x11,
-                                    0x10, 0x11, 0x10, 0x00, 0x00 };
+    unsigned char byte_array[15] = { 0x01, 0x00, 0x10, 0xFF, 0x12,
+                                     0x00, 0x01, 0x12, 0xDD, 0x11,
+                                     0x10, 0x11, 0x10, 0x00, 0x00 };
     ck_assert_int_eq(0, extract_pixel(byte_array, 5, 0, 0));
     ck_assert_int_eq(1, extract_pixel(byte_array, 5, 0, 31));
     ck_assert_int_eq(0, extract_pixel(byte_array, 5, 1, 23));
@@ -113,10 +113,31 @@ Suite * extact_pixel_suite(void)
     return s;
 }
 
+START_TEST (testFor1x1Image)
+{
+    ck_assert_int_eq(4, get_scan_line_size_in_bytes(8, 2));
+}
+END_TEST
+
+Suite * get_scan_line_suite(void)
+{
+    Suite *s;
+    TCase *tc_core;
+
+    s = suite_create("get_scan_line_size_in_bytes");
+
+    /* Core test case */
+    tc_core = tcase_create("Core");
+
+    tcase_add_test(tc_core, testFor1x1Image);
+    suite_add_tcase(s, tc_core);
+
+    return s;
+}
+
 int main(void)
 {
     int number_failed;
-    Suite *s;
     Suite *lsb;
     SRunner *sr;
 
@@ -126,8 +147,15 @@ int main(void)
     number_failed = srunner_ntests_failed(sr);
     srunner_free(sr);
 
+    Suite *s;
     s = extact_pixel_suite();
     sr = srunner_create(s);
+    srunner_run_all(sr, CK_NORMAL);
+    number_failed += srunner_ntests_failed(sr);
+
+    Suite *sl;
+    sl = get_scan_line_suite();
+    sr = srunner_create(sl);
     srunner_run_all(sr, CK_NORMAL);
     number_failed += srunner_ntests_failed(sr);
 
