@@ -1,14 +1,13 @@
-#How to compile
+#How to get it working
 ```sh
-make
+make executable
+./read_1bit_bmp
 ```
 
 # How to run tests
 1. Install __check__ !(http://libcheck.github.io/check/)
 
 ```sh
-make
-./read_1bit_bmp_test
+make test
 ```
-
 
