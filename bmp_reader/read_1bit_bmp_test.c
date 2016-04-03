@@ -3,35 +3,35 @@
 #include "read_1bit_bmp.h"
 
 START_TEST (testFor1)
-{ 
+{
     unsigned char arr[4] = {0x01,0x00, 0x00, 0x00};
     ck_assert_int_eq(1, lsb_to_int(arr));
 }
 END_TEST
 
 START_TEST (testFor0)
-{ 
+{
     unsigned char arr[4] = {0x00,0x00, 0x00, 0x00};
     ck_assert_int_eq(0, lsb_to_int(arr));
 }
 END_TEST
 
 START_TEST (testFor255)
-{ 
+{
     unsigned char arr[4] = {0xFF,0x00, 0x00, 0x00};
     ck_assert_int_eq(255, lsb_to_int(arr));
 }
 END_TEST
 
 START_TEST (testFor61695)
-{ 
+{
     unsigned char arr[4] = {0xFF,0xF0, 0x00, 0x00};
     ck_assert_int_eq(61695, lsb_to_int(arr));
 }
 END_TEST
 
 START_TEST (testFor268435456)
-{ 
+{
     unsigned char arr[4] = {0x00,0x00, 0x00, 0x10};
     ck_assert_int_eq(268435456, lsb_to_int(arr));
 }
@@ -57,14 +57,41 @@ Suite * lsb_to_int_suite(void)
     return s;
 }
 
+START_TEST (testForBorderPixelsIn1x1Image)
+{
+    //the img should look like this
+    //|B|W|
+    //|W|B|
+    unsigned char byte_array[4] = { 0x40, 0x00,
+                                    0x80, 0x00 };
+    ck_assert_int_eq(0, extract_pixel(byte_array, 2, 0, 0));
+    ck_assert_int_eq(1, extract_pixel(byte_array, 2, 0, 1));
+    ck_assert_int_eq(1, extract_pixel(byte_array, 2, 1, 0));
+    ck_assert_int_eq(0, extract_pixel(byte_array, 2, 1, 1));
+}
+END_TEST
+
 START_TEST (testForBorderPixels)
-{ 
+{
     unsigned char byte_array[4] = { 0x01, 0x00,
                                     0x00, 0x01 };
     ck_assert_int_eq(0, extract_pixel(byte_array, 2, 0, 0));
     ck_assert_int_eq(0, extract_pixel(byte_array, 2, 0, 15));
     ck_assert_int_eq(0, extract_pixel(byte_array, 2, 1, 0));
     ck_assert_int_eq(1, extract_pixel(byte_array, 2, 1, 15));
+}
+END_TEST
+
+
+START_TEST (testForBiggerImage)
+{
+    unsigned char byte_array[4] = { 0x01, 0x00, 0x10, 0xFF, 0x12,
+                                    0x00, 0x01, 0x12, 0xDD, 0x11,
+                                    0x10, 0x11, 0x10, 0x00, 0x00 };
+    ck_assert_int_eq(0, extract_pixel(byte_array, 5, 0, 0));
+    ck_assert_int_eq(1, extract_pixel(byte_array, 5, 0, 31));
+    ck_assert_int_eq(0, extract_pixel(byte_array, 5, 1, 23));
+    ck_assert_int_eq(1, extract_pixel(byte_array, 5, 2, 3));
 }
 END_TEST
 
@@ -79,12 +106,8 @@ Suite * extact_pixel_suite(void)
     tc_core = tcase_create("Core");
 
     tcase_add_test(tc_core, testForBorderPixels);
-    /*
-    tcase_add_test(tc_core, testForLastPixelFirstRow);
-    tcase_add_test(tc_core, testForMiddlePixelMiddleRow);
-    tcase_add_test(tc_core, testForFirstPixelLastRow);
-    tcase_add_test(tc_core, testForLastPixelLastRow);
-    */
+    tcase_add_test(tc_core, testForBorderPixelsIn1x1Image);
+    tcase_add_test(tc_core, testForBiggerImage);
     suite_add_tcase(s, tc_core);
 
     return s;
