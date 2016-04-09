@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 
+#define BMP_HEADER_SIZE 14
+
 struct DibHeader {
     int size;
     int img_width;

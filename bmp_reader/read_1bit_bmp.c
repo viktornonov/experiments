@@ -1,9 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdlib.h>
 #include "read_1bit_bmp.h"
-
-#define BMP_HEADER_SIZE 14
 
 unsigned char* read_dib_header(FILE *fp)
 {
