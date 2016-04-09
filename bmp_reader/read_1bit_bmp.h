@@ -1,6 +1,8 @@
 #ifndef READ_1BIT_BMP_H_
 #define READ_1BIT_BMP_H_
 
+#include <stdio.h>
+
 struct DibHeader {
     int size;
     int img_width;
@@ -9,6 +11,12 @@ struct DibHeader {
 };
 
 typedef struct DibHeader DibHeader;
+
+unsigned char* read_dib_header(FILE *);
+
+int extract_value_from_byte_array(unsigned char *, int, int);
+
+void extract_dib_header_data(DibHeader *, unsigned char *);
 
 int lsb_to_int(unsigned char*);
 

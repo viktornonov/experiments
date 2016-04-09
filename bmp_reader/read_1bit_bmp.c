@@ -1,10 +1,44 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdlib.h>
 #include "read_1bit_bmp.h"
 
 #define BMP_HEADER_SIZE 14
 
-int lsb_to_int(unsigned char* lsb_array) {
+unsigned char* read_dib_header(FILE *fp)
+{
+    unsigned char dib_header_size[4]; //the size of the dib header takes 4 bytes
+    fread(dib_header_size, 1, 4, fp);
+    int dib_header_size_as_int = lsb_to_int(dib_header_size) - 4; //substracting 4 bytes that we read already for the dib header size
+    unsigned char *dib_header;
+    dib_header = (unsigned char *)malloc(dib_header_size_as_int * sizeof(unsigned char));
+    fread(dib_header, 1, dib_header_size_as_int, fp); //this is the dib header without the size
+
+    return dib_header;
+}
+
+int extract_value_from_byte_array(unsigned char* byte_array, int start_position, int length) {
+    unsigned char slice[length];
+    for(int i = 0; i < length; i++) {
+        slice[i] = byte_array[start_position + i];
+    }
+    return lsb_to_int(slice);
+}
+
+void extract_dib_header_data(DibHeader *dib_header, unsigned char *dib_header_data)
+{
+    dib_header->pixel_array_size = extract_value_from_byte_array(dib_header_data, 16, 4);
+    printf("byte array size=%d\n", dib_header->pixel_array_size);
+
+    dib_header->img_width = extract_value_from_byte_array(dib_header_data, 0, 4);
+    printf("width=%d\n", dib_header->img_width);
+
+    dib_header->img_height = extract_value_from_byte_array(dib_header_data, 4, 4);
+    printf("height=%d\n", dib_header->img_height);
+}
+
+int lsb_to_int(unsigned char* lsb_array)
+{
     int result;
     result = ((int)lsb_array[0]) + (((int)lsb_array[1]) << 8) +
              (((int)lsb_array[2]) << 16) + (((int)lsb_array[3]) << 24);
@@ -12,7 +46,8 @@ int lsb_to_int(unsigned char* lsb_array) {
 }
 
 //[40, 00, 00, 00, 80, 00, 00, 00], 8, 2, 2
-void print_byte_array_as_ascii_art(unsigned char *byte_array, DibHeader* dib_header) {
+void print_byte_array_as_ascii_art(unsigned char *byte_array, DibHeader* dib_header)
+{
     print_byte_array(byte_array, dib_header->pixel_array_size);
 
     int width = dib_header->img_width;
