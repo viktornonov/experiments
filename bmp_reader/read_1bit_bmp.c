@@ -12,12 +12,13 @@ int lsb_to_int(unsigned char* lsb_array) {
 }
 
 //[40, 00, 00, 00, 80, 00, 00, 00], 8, 2, 2
-void print_byte_array_as_ascii_art(unsigned char *byte_array, int byte_array_size,
-                                   int width, int height) {
-    print_byte_array(byte_array, byte_array_size);
+void print_byte_array_as_ascii_art(unsigned char *byte_array, DibHeader* dib_header) {
+    print_byte_array(byte_array, dib_header->pixel_array_size);
 
-    byte_array_size -= 2; //2 btyes padding at the end of the byte array
-    int scan_line_size_in_bytes = get_scan_line_size_in_bytes(byte_array_size,
+    int width = dib_header->img_width;
+    int height = dib_header->img_height;
+    dib_header->pixel_array_size -= 2; //2 btyes padding at the end of the byte array
+    int scan_line_size_in_bytes = get_scan_line_size_in_bytes(dib_header->pixel_array_size,
                                                               height);
     char pixel_array[height][width];
     //0000 0000 0000 1100 1100 0111 0000 000
@@ -42,12 +43,11 @@ void print_byte_array_as_ascii_art(unsigned char *byte_array, int byte_array_siz
 
 int get_scan_line_size_in_bytes(int byte_array_size, int height)
 {
-    //The bits representing the bitmap pixels are packed in rows. The size of each row is rounded up to a multiple of 4 bytes (a 32-bit DWORD) by padding.
+    //The bits representing the bitmap pixels are packed in rows.
+    //The size of each row is rounded up to a multiple of 4 bytes (a 32-bit DWORD) by padding.
     //For images with height > 1, multiple padded rows are stored consecutively, forming a Pixel Array.
     int padding = 0;
     padding = (byte_array_size / height) % 4;
-
-    //10 bytes / 2 = 5 bytes % 4 == 0
 
     int scan_line_size_in_bytes = 0;
     if(padding == 0) {
