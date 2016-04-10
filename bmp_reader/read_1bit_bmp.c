@@ -50,7 +50,7 @@ void print_byte_array_as_ascii_art(unsigned char *byte_array, DibHeader* dib_hea
     int width = dib_header->img_width;
     int height = dib_header->img_height;
     dib_header->pixel_array_size -= 2; //2 btyes padding at the end of the byte array
-    int scan_line_size_in_bytes = get_scan_line_size_in_bytes(dib_header);
+    int scan_line_size_in_bytes = dib_header->pixel_array_size / dib_header->img_height;
     char pixel_array[height][width];
     //0000 0000 0000 1100 1100 0111 0000 000
     //0000 0000 0000 0111 1111 0000 0000 0000 0000 00000 0000 0000
@@ -70,29 +70,6 @@ void print_byte_array_as_ascii_art(unsigned char *byte_array, DibHeader* dib_hea
     }
 
     print_pixel_array(height, width, pixel_array);
-}
-
-int get_scan_line_size_in_bytes(DibHeader *dib_header)
-{
-    //The bits representing the bitmap pixels are packed in rows.
-    //The size of each row is rounded up to a multiple of 4 bytes (a 32-bit DWORD) by padding.
-    int pixel_array_size = dib_header->pixel_array_size;
-    int height = dib_header->img_height;
-    int padding = (pixel_array_size / height) % 4;
-
-    int scan_line_size_in_bytes = 0;
-    if(padding == 0) {
-        scan_line_size_in_bytes = pixel_array_size / height;
-    }
-    else {
-        scan_line_size_in_bytes = pixel_array_size / height + padding; //not tested
-    }
-
-    //printf("space for pixels=%d\n", scan_line_size_in_bytes);
-
-    scan_line_size_in_bytes += padding; //add the padding
-    //printf("scan line size in bytes=%d, padding=%d\n", scan_line_size_in_bytes, padding);
-    return scan_line_size_in_bytes;
 }
 
 void print_byte_array(unsigned char *byte_array, int byte_array_size)
@@ -115,6 +92,8 @@ void print_pixel_array(int rows, int cols, char (*pixel_array)[cols])
 
 int extract_pixel(unsigned char* byte_array, int scan_line_size_in_bytes,
                   int row, int col) {
+    //The bits representing the bitmap pixels are packed in rows.
+    //The size of each row is rounded up to a multiple of 4 bytes (a 32-bit DWORD) by padding.
     int byte_array_index;
     if (row == 0) {
         byte_array_index = col / 8;

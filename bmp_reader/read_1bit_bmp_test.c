@@ -113,31 +113,6 @@ Suite * extact_pixel_suite(void)
     return s;
 }
 
-START_TEST (testFor1x1Image)
-{
-    DibHeader dib_header;
-    dib_header.pixel_array_size = 8;
-    dib_header.img_height = 2;
-    ck_assert_int_eq(4, get_scan_line_size_in_bytes(&dib_header));
-}
-END_TEST
-
-Suite * get_scan_line_suite(void)
-{
-    Suite *s;
-    TCase *tc_core;
-
-    s = suite_create("get_scan_line_size_in_bytes");
-
-    /* Core test case */
-    tc_core = tcase_create("Core");
-
-    tcase_add_test(tc_core, testFor1x1Image);
-    suite_add_tcase(s, tc_core);
-
-    return s;
-}
-
 int main(void)
 {
     int number_failed;
@@ -153,12 +128,6 @@ int main(void)
     Suite *s;
     s = extact_pixel_suite();
     sr = srunner_create(s);
-    srunner_run_all(sr, CK_NORMAL);
-    number_failed += srunner_ntests_failed(sr);
-
-    Suite *sl;
-    sl = get_scan_line_suite();
-    sr = srunner_create(sl);
     srunner_run_all(sr, CK_NORMAL);
     number_failed += srunner_ntests_failed(sr);
 
