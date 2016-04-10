@@ -102,23 +102,7 @@ int extract_pixel(unsigned char* byte_array, int scan_line_size_in_bytes,
         byte_array_index = (scan_line_size_in_bytes * row) + (col/8);
     }
     unsigned char current_byte_element = byte_array[byte_array_index]; // the calculation will get fucked up if the bmp is not 1 bit
-    //printf("%d\n", scan_line_size_in_bytes * row);
-    //0000 0000 8 bits
-    //1 << 7 - col 0100 0000
-    /*
-    0 % 7 = 0
-    1 % 7 = 1
-    2 % 7 = 2
-    ...
-    7 % 7 = 0
-    8 % 7 = 1
-    */
     unsigned char pixel_mask = 1 << (7 - (col % 8));
-    //printf("current %d index in byte array [%d], [%d][%d] - %d - %d = %c\n", current_byte_element, byte_array_index, row, col, pixel_mask, current_byte_element & pixel_mask, ((current_byte_element & pixel_mask) == 0 ? '`' : '#'));
-    //mask for col 0 => 1000 0000
-    //    byte => 0100 0000
-    //mask for col 1 => 0100 0000
-    //    byte => 0100 0000
     if((current_byte_element & pixel_mask) == 0) {
         return 0;
     }
