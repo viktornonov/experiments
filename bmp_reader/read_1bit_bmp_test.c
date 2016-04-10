@@ -115,7 +115,10 @@ Suite * extact_pixel_suite(void)
 
 START_TEST (testFor1x1Image)
 {
-    ck_assert_int_eq(4, get_scan_line_size_in_bytes(8, 2));
+    DibHeader dib_header;
+    dib_header.pixel_array_size = 8;
+    dib_header.img_height = 2;
+    ck_assert_int_eq(4, get_scan_line_size_in_bytes(&dib_header));
 }
 END_TEST
 

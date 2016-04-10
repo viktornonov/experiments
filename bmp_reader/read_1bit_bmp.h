@@ -24,7 +24,7 @@ int lsb_to_int(unsigned char*);
 
 void print_byte_array_as_ascii_art(unsigned char*, DibHeader *);
 
-int get_scan_line_size_in_bytes(int, int);
+int get_scan_line_size_in_bytes(DibHeader *);
 
 void print_byte_array(unsigned char *, int);
 

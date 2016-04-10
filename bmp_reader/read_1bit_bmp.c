@@ -50,8 +50,7 @@ void print_byte_array_as_ascii_art(unsigned char *byte_array, DibHeader* dib_hea
     int width = dib_header->img_width;
     int height = dib_header->img_height;
     dib_header->pixel_array_size -= 2; //2 btyes padding at the end of the byte array
-    int scan_line_size_in_bytes = get_scan_line_size_in_bytes(dib_header->pixel_array_size,
-                                                              height);
+    int scan_line_size_in_bytes = get_scan_line_size_in_bytes(dib_header);
     char pixel_array[height][width];
     //0000 0000 0000 1100 1100 0111 0000 000
     //0000 0000 0000 0111 1111 0000 0000 0000 0000 00000 0000 0000
@@ -73,20 +72,20 @@ void print_byte_array_as_ascii_art(unsigned char *byte_array, DibHeader* dib_hea
     print_pixel_array(height, width, pixel_array);
 }
 
-int get_scan_line_size_in_bytes(int byte_array_size, int height)
+int get_scan_line_size_in_bytes(DibHeader *dib_header)
 {
     //The bits representing the bitmap pixels are packed in rows.
     //The size of each row is rounded up to a multiple of 4 bytes (a 32-bit DWORD) by padding.
-    //For images with height > 1, multiple padded rows are stored consecutively, forming a Pixel Array.
-    int padding = 0;
-    padding = (byte_array_size / height) % 4;
+    int pixel_array_size = dib_header->pixel_array_size;
+    int height = dib_header->img_height;
+    int padding = (pixel_array_size / height) % 4;
 
     int scan_line_size_in_bytes = 0;
     if(padding == 0) {
-        scan_line_size_in_bytes = byte_array_size / height;
+        scan_line_size_in_bytes = pixel_array_size / height;
     }
     else {
-        scan_line_size_in_bytes = byte_array_size / height + padding; //not tested
+        scan_line_size_in_bytes = pixel_array_size / height + padding; //not tested
     }
 
     //printf("space for pixels=%d\n", scan_line_size_in_bytes);
@@ -124,7 +123,7 @@ int extract_pixel(unsigned char* byte_array, int scan_line_size_in_bytes,
         byte_array_index = (scan_line_size_in_bytes * row) + (col/8);
     }
     unsigned char current_byte_element = byte_array[byte_array_index]; // the calculation will get fucked up if the bmp is not 1 bit
-            //printf("%d\n", scan_line_size_in_bytes * row);
+    //printf("%d\n", scan_line_size_in_bytes * row);
     //0000 0000 8 bits
     //1 << 7 - col 0100 0000
     /*
