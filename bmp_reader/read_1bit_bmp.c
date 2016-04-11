@@ -14,7 +14,8 @@ unsigned char* read_dib_header(FILE *fp)
     return dib_header;
 }
 
-int extract_value_from_byte_array(unsigned char* byte_array, int start_position, int length) {
+int extract_value_from_byte_array(unsigned char* byte_array, int start_position, int length)
+{
     unsigned char slice[length];
     for(int i = 0; i < length; i++) {
         slice[i] = byte_array[start_position + i];
@@ -25,13 +26,13 @@ int extract_value_from_byte_array(unsigned char* byte_array, int start_position,
 void extract_dib_header_data(DibHeader *dib_header, unsigned char *dib_header_data)
 {
     dib_header->pixel_array_size = extract_value_from_byte_array(dib_header_data, 16, 4);
-    printf("byte array size=%d\n", dib_header->pixel_array_size);
+    //printf("byte array size=%d\n", dib_header->pixel_array_size);
 
     dib_header->img_width = extract_value_from_byte_array(dib_header_data, 0, 4);
-    printf("width=%d\n", dib_header->img_width);
+    //printf("width=%d\n", dib_header->img_width);
 
     dib_header->img_height = extract_value_from_byte_array(dib_header_data, 4, 4);
-    printf("height=%d\n", dib_header->img_height);
+    //printf("height=%d\n", dib_header->img_height);
 }
 
 int lsb_to_int(unsigned char* lsb_array)
@@ -45,7 +46,7 @@ int lsb_to_int(unsigned char* lsb_array)
 //[40, 00, 00, 00, 80, 00, 00, 00], 8, 2, 2
 void print_byte_array_as_ascii_art(unsigned char *byte_array, DibHeader* dib_header)
 {
-    print_byte_array(byte_array, dib_header->pixel_array_size);
+    //print_byte_array(byte_array, dib_header->pixel_array_size);
 
     int width = dib_header->img_width;
     int height = dib_header->img_height;
@@ -91,7 +92,8 @@ void print_pixel_array(int rows, int cols, char (*pixel_array)[cols])
 }
 
 int extract_pixel(unsigned char* byte_array, int scan_line_size_in_bytes,
-                  int row, int col) {
+                  int row, int col)
+{
     //The bits representing the bitmap pixels are packed in rows.
     //The size of each row is rounded up to a multiple of 4 bytes (a 32-bit DWORD) by padding.
     int byte_array_index;

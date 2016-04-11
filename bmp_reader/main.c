@@ -13,7 +13,7 @@ int main()
     extract_dib_header_data(dib_header, dib_header_data);
 
     unsigned char *color_pallette;
-    color_pallette = (unsigned char *)malloc(8 * sizeof(unsigned char)); //magic number 8 should be fixed
+    color_pallette = (unsigned char *)malloc(8 * sizeof(unsigned char));
     fread(color_pallette, 1, 8, fp);
 
     unsigned char* pixel_array = (unsigned char *)malloc(sizeof(int) * dib_header->pixel_array_size);
