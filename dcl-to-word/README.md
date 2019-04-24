@@ -2,7 +2,7 @@
 
 Described in 5.12 Complicated Declarations.
 ```
-./configure
+mkdir build && cd build && ../configure
 make
 src/main
 ```
